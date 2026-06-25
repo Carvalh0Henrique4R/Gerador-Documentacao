@@ -35,9 +35,11 @@ export default function Layout({ children }: { children: ReactElement<Data.Share
               </Link>
               {children.props.user ? (
                 <>
-                  <span>{children.props.user.initials}</span>
+                  <span className="user-initials">{children.props.user.initials}</span>
                   <Form route="session.destroy">
-                    <button type="submit"> Logout </button>
+                    <button type="submit" className="nav-logout">
+                      Logout
+                    </button>
                   </Form>
                 </>
               ) : (
