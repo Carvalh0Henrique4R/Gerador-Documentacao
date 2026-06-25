@@ -36,7 +36,9 @@ export default class ProjectsController {
 
   async llmSettings({ params, inertia }: HttpContext) {
     const project = await Project.findOrFail(params.id)
-    const config = await LlmProviderConfig.findBy('project_id', project.id)
+    const config = project.llmProviderConfigId
+      ? await LlmProviderConfig.find(project.llmProviderConfigId)
+      : null
 
     return inertia.render('projects/llm_settings', {
       project,
@@ -55,7 +57,9 @@ export default class ProjectsController {
   async saveLlmSettings({ params, request, response, session }: HttpContext) {
     const project = await Project.findOrFail(params.id)
     const payload = await request.validateUsing(llmProviderConfigValidator)
-    const existing = await LlmProviderConfig.findBy('project_id', project.id)
+    const existing = project.llmProviderConfigId
+      ? await LlmProviderConfig.find(project.llmProviderConfigId)
+      : null
     const provider = payload.provider as LlmProviderName
     const normalizedApiKey = payload.apiKey?.trim() || null
 
@@ -74,17 +78,22 @@ export default class ProjectsController {
         ? encryption.encrypt(normalizedApiKey)
         : existing?.encryptedApiKey || null
 
-    await LlmProviderConfig.updateOrCreate(
-      { projectId: project.id },
-      {
-        projectId: project.id,
-        provider,
-        model: payload.model || null,
-        baseUrl: payload.baseUrl || null,
-        encryptedApiKey,
-        isActive: Boolean(payload.isActive),
-      }
-    )
+    const values = {
+      provider,
+      model: payload.model || null,
+      baseUrl: payload.baseUrl || null,
+      encryptedApiKey,
+      isActive: payload.isActive ?? true,
+    }
+
+    const config = existing
+      ? await existing.merge(values).save()
+      : await LlmProviderConfig.create(values)
+
+    if (project.llmProviderConfigId !== config.id) {
+      project.llmProviderConfigId = config.id
+      await project.save()
+    }
 
     session.flash('success', 'Configuração de LLM salva com segurança.')
     return response.redirect().toRoute('projects.llm_settings', { id: project.id })

@@ -1,5 +1,5 @@
 export type GenerateDocumentationInput = {
-  projectId: number
+  projectId: string
   sourceType: string
   sourceRef: string
   diff?: string

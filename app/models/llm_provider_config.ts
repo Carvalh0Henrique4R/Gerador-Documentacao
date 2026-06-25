@@ -1,5 +1,5 @@
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Project from '#models/project'
 
@@ -7,10 +7,7 @@ export type LlmProviderName = 'anthropic' | 'openai' | 'google' | 'ollama' | 'no
 
 export default class LlmProviderConfig extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
-
-  @column()
-  declare projectId: number
+  declare id: string
 
   @column()
   declare provider: LlmProviderName
@@ -27,8 +24,8 @@ export default class LlmProviderConfig extends BaseModel {
   @column()
   declare isActive: boolean
 
-  @belongsTo(() => Project)
-  declare project: BelongsTo<typeof Project>
+  @hasMany(() => Project)
+  declare projects: HasMany<typeof Project>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

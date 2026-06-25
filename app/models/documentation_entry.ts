@@ -5,10 +5,10 @@ import Project from '#models/project'
 
 export default class DocumentationEntry extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
 
   @column()
-  declare projectId: number
+  declare projectId: string
 
   @column()
   declare sourceType: string
@@ -20,7 +20,7 @@ export default class DocumentationEntry extends BaseModel {
   declare status: string
 
   @column()
-  declare content: string | null
+  declare generatedContent: string | null
 
   @belongsTo(() => Project)
   declare project: BelongsTo<typeof Project>

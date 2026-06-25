@@ -4,8 +4,10 @@ export default class extends BaseSchema {
   protected tableName = 'users'
 
   async up() {
+    await this.db.rawQuery('CREATE EXTENSION IF NOT EXISTS "pgcrypto"')
+
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').notNullable()
+      table.uuid('id').primary().defaultTo(this.raw('gen_random_uuid()'))
       table.string('full_name').nullable()
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()

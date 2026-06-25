@@ -8,16 +8,25 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export class DocumentationEntrySchema extends BaseModel {
-  static $columns = ['content', 'createdAt', 'id', 'projectId', 'sourceRef', 'sourceType', 'status', 'updatedAt'] as const
+  static $columns = [
+    'createdAt',
+    'generatedContent',
+    'id',
+    'projectId',
+    'sourceRef',
+    'sourceType',
+    'status',
+    'updatedAt',
+  ] as const
   $columns = DocumentationEntrySchema.$columns
-  @column()
-  declare content: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
-  @column({ isPrimary: true })
-  declare id: number
   @column()
-  declare projectId: number
+  declare generatedContent: string | null
+  @column({ isPrimary: true })
+  declare id: string
+  @column()
+  declare projectId: string
   @column()
   declare sourceRef: string
   @column()
@@ -29,7 +38,16 @@ export class DocumentationEntrySchema extends BaseModel {
 }
 
 export class LlmProviderConfigSchema extends BaseModel {
-  static $columns = ['baseUrl', 'createdAt', 'encryptedApiKey', 'id', 'isActive', 'model', 'projectId', 'provider', 'updatedAt'] as const
+  static $columns = [
+    'baseUrl',
+    'createdAt',
+    'encryptedApiKey',
+    'id',
+    'isActive',
+    'model',
+    'provider',
+    'updatedAt',
+  ] as const
   $columns = LlmProviderConfigSchema.$columns
   @column()
   declare baseUrl: string | null
@@ -38,13 +56,11 @@ export class LlmProviderConfigSchema extends BaseModel {
   @column()
   declare encryptedApiKey: string | null
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
   @column()
   declare isActive: boolean
   @column()
   declare model: string | null
-  @column()
-  declare projectId: number
   @column()
   declare provider: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
@@ -52,14 +68,25 @@ export class LlmProviderConfigSchema extends BaseModel {
 }
 
 export class ProjectSchema extends BaseModel {
-  static $columns = ['createdAt', 'gitProvider', 'id', 'name', 'repositoryUrl', 'updatedAt', 'webhookSecret'] as const
+  static $columns = [
+    'createdAt',
+    'gitProvider',
+    'id',
+    'llmProviderConfigId',
+    'name',
+    'repositoryUrl',
+    'updatedAt',
+    'webhookSecret',
+  ] as const
   $columns = ProjectSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
   @column()
   declare gitProvider: string
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
+  @column()
+  declare llmProviderConfigId: string | null
   @column()
   declare name: string
   @column()
@@ -80,7 +107,7 @@ export class UserSchema extends BaseModel {
   @column()
   declare fullName: string | null
   @column({ isPrimary: true })
-  declare id: number
+  declare id: string
   @column({ serializeAs: null })
   declare password: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
