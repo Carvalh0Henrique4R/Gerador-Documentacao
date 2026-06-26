@@ -9,24 +9,34 @@
 
 import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
+import { inertiaPages } from '#services/inertia_pages'
 import router from '@adonisjs/core/services/router'
-
-router.on('/').renderInertia('home', {}).as('home')
 
 const ProjectsController = () => import('#controllers/projects_controller')
 
-router.get('/projects', [ProjectsController, 'index']).as('projects.index')
-router.get('/projects/create', [ProjectsController, 'create']).as('projects.create')
-router.post('/projects', [ProjectsController, 'store']).as('projects.store')
+router.on('/').renderInertia(inertiaPages.landing, {}).as('landing')
+
 router
-  .get('/projects/:id/settings/llm', [ProjectsController, 'llmSettings'])
-  .as('projects.llm_settings')
-router
-  .post('/projects/:id/settings/llm', [ProjectsController, 'saveLlmSettings'])
-  .as('projects.llm_settings.save')
-router
-  .get('/projects/:id/documentation', [ProjectsController, 'documentation'])
-  .as('projects.documentation')
+  .group(() => {
+    router.get('/home', [ProjectsController, 'dashboard']).as('home')
+    router.get('/projects', [ProjectsController, 'index']).as('projects.index')
+    router.get('/projects/create', [ProjectsController, 'create']).as('projects.create')
+    router.post('/projects', [ProjectsController, 'store']).as('projects.store')
+    router
+      .get('/projects/:id/settings/llm', [ProjectsController, 'llmSettings'])
+      .as('projects.llm_settings')
+    router
+      .post('/projects/:id/settings/llm', [ProjectsController, 'saveLlmSettings'])
+      .as('projects.llm_settings.save')
+    router
+      .get('/projects/:id/documentation', [ProjectsController, 'documentation'])
+      .as('projects.documentation')
+  })
+  .use(middleware.jwtAuth())
+
+router.get('/auth/me', [controllers.Session, 'me']).as('auth.me')
+router.post('/auth/login', [controllers.Session, 'store']).as('auth.login')
+router.post('/auth/logout', [controllers.Session, 'destroy']).as('auth.logout')
 
 router
   .group(() => {
@@ -42,4 +52,4 @@ router
   .group(() => {
     router.post('logout', [controllers.Session, 'destroy'])
   })
-  .use(middleware.auth())
+  .use(middleware.jwtAuth())

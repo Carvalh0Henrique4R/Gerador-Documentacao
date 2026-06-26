@@ -1,3 +1,4 @@
+import type { FormEvent } from 'react'
 import { useForm } from '@inertiajs/react'
 import { Badge } from '~/components/ui/badge'
 import { Button, ButtonLink } from '~/components/ui/button'
@@ -7,7 +8,7 @@ import { Input } from '~/components/ui/input'
 import { Select } from '~/components/ui/select'
 
 type Project = {
-  id: number
+  id: string
   name: string
 }
 
@@ -37,7 +38,7 @@ export default function LlmSettings({ project, config }: { project: Project; con
   })
   const requiresApiKey = !['ollama', 'none'].includes(form.data.provider)
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     form.post(`/projects/${project.id}/settings/llm`)
   }

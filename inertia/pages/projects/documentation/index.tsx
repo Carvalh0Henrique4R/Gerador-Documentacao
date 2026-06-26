@@ -3,12 +3,12 @@ import { ButtonLink } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
 type Project = {
-  id: number
+  id: string
   name: string
 }
 
 type DocumentationEntry = {
-  id: number
+  id: string
   sourceType: string
   sourceRef: string
   status: string

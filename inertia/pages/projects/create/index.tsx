@@ -1,3 +1,4 @@
+import type { FormEvent } from 'react'
 import { useForm } from '@inertiajs/react'
 import { Button, ButtonLink } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
@@ -21,7 +22,7 @@ export default function CreateProject() {
     webhookSecret: '',
   })
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     form.post('/projects')
   }

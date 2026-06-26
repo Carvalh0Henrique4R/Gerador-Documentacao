@@ -13,7 +13,7 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
      * In that case, we must always assume that HttpContext is not fully hydrated
      * with all the properties
      */
-    const { session, auth } = ctx as Partial<HttpContext>
+    const { session, auth, jwtUser } = ctx as Partial<HttpContext>
 
     /**
      * Fetching the first error from the flash messages
@@ -31,7 +31,9 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
         error,
         success,
       }),
-      user: ctx.inertia.always(auth?.user ? UserTransformer.transform(auth.user) : undefined),
+      user: ctx.inertia.always(
+        auth?.user || jwtUser ? UserTransformer.transform((auth?.user ?? jwtUser)!) : undefined
+      ),
     }
   }
 

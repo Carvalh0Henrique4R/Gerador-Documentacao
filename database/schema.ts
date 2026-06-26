@@ -76,6 +76,7 @@ export class ProjectSchema extends BaseModel {
     'name',
     'repositoryUrl',
     'updatedAt',
+    'userId',
     'webhookSecret',
   ] as const
   $columns = ProjectSchema.$columns
@@ -93,6 +94,8 @@ export class ProjectSchema extends BaseModel {
   declare repositoryUrl: string
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+  @column()
+  declare userId: string | null
   @column()
   declare webhookSecret: string
 }

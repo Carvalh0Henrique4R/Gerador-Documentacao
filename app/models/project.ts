@@ -3,6 +3,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import DocumentationEntry from '#models/documentation_entry'
 import LlmProviderConfig from '#models/llm_provider_config'
+import User from '#models/user'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -18,10 +19,16 @@ export default class Project extends BaseModel {
   declare gitProvider: string
 
   @column({ serializeAs: null })
+  declare userId: string | null
+
+  @column({ serializeAs: null })
   declare webhookSecret: string
 
   @column()
   declare llmProviderConfigId: string | null
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
 
   @belongsTo(() => LlmProviderConfig)
   declare llmProviderConfig: BelongsTo<typeof LlmProviderConfig>
