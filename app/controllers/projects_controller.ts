@@ -1,6 +1,8 @@
 import DocumentationEntry from '#models/documentation_entry'
 import LlmProviderConfig, { type LlmProviderName } from '#models/llm_provider_config'
 import Project from '#models/project'
+import { inertiaPages } from '#services/inertia_pages'
+import ProjectDashboardService from '#services/projects/project_dashboard_service'
 import { llmProviderConfigValidator, projectValidator } from '#validators/project'
 import encryption from '@adonisjs/core/services/encryption'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -8,39 +10,47 @@ import type { HttpContext } from '@adonisjs/core/http'
 const providersWithoutKey: LlmProviderName[] = ['ollama', 'none']
 
 export default class ProjectsController {
-  async index({ inertia }: HttpContext) {
-    const projects = await Project.query().orderBy('created_at', 'desc')
+  private readonly dashboardService = new ProjectDashboardService()
 
-    return inertia.render('projects/index', {
-      projects: projects.map((project) => ({
-        id: project.id,
-        name: project.name,
-        repositoryUrl: project.repositoryUrl,
-        gitProvider: project.gitProvider,
-      })),
-    })
+  async dashboard(ctx: HttpContext) {
+    return ctx.inertia.render(
+      inertiaPages.projects.home,
+      await this.dashboardService.getDashboardProps(this.userId(ctx))
+    )
+  }
+
+  async index(ctx: HttpContext) {
+    return ctx.inertia.render(
+      inertiaPages.projects.list,
+      await this.dashboardService.getDashboardProps(this.userId(ctx))
+    )
   }
 
   async create({ inertia }: HttpContext) {
-    return inertia.render('projects/create', {})
+    return inertia.render(inertiaPages.projects.create, {})
   }
 
-  async store({ request, response, session }: HttpContext) {
+  async store(ctx: HttpContext) {
+    const { request, response, session } = ctx
     const payload = await request.validateUsing(projectValidator)
 
-    await Project.create(payload)
+    await Project.create({
+      ...payload,
+      userId: this.userId(ctx),
+    })
 
     session.flash('success', 'Projeto cadastrado com sucesso.')
     return response.redirect().toRoute('projects.index')
   }
 
-  async llmSettings({ params, inertia }: HttpContext) {
-    const project = await Project.findOrFail(params.id)
+  async llmSettings(ctx: HttpContext) {
+    const { params, inertia } = ctx
+    const project = await this.findUserProjectOrFail(params.id, this.userId(ctx))
     const config = project.llmProviderConfigId
       ? await LlmProviderConfig.find(project.llmProviderConfigId)
       : null
 
-    return inertia.render('projects/llm_settings', {
+    return inertia.render(inertiaPages.projects.llmSettings, {
       project,
       config: config
         ? {
@@ -54,8 +64,9 @@ export default class ProjectsController {
     })
   }
 
-  async saveLlmSettings({ params, request, response, session }: HttpContext) {
-    const project = await Project.findOrFail(params.id)
+  async saveLlmSettings(ctx: HttpContext) {
+    const { params, request, response, session } = ctx
+    const project = await this.findUserProjectOrFail(params.id, this.userId(ctx))
     const payload = await request.validateUsing(llmProviderConfigValidator)
     const existing = project.llmProviderConfigId
       ? await LlmProviderConfig.find(project.llmProviderConfigId)
@@ -99,13 +110,14 @@ export default class ProjectsController {
     return response.redirect().toRoute('projects.llm_settings', { id: project.id })
   }
 
-  async documentation({ params, inertia }: HttpContext) {
-    const project = await Project.findOrFail(params.id)
+  async documentation(ctx: HttpContext) {
+    const { params, inertia } = ctx
+    const project = await this.findUserProjectOrFail(params.id, this.userId(ctx))
     const entries = await DocumentationEntry.query()
       .where('project_id', project.id)
       .orderBy('created_at', 'desc')
 
-    return inertia.render('projects/documentation', {
+    return inertia.render(inertiaPages.projects.documentation, {
       project: {
         id: project.id,
         name: project.name,
@@ -118,5 +130,13 @@ export default class ProjectsController {
         createdAt: entry.createdAt.toISO() || '',
       })),
     })
+  }
+
+  private userId(ctx: HttpContext) {
+    return ctx.jwtUser!.id
+  }
+
+  private findUserProjectOrFail(projectId: string, userId: string) {
+    return Project.query().where('id', projectId).where('user_id', userId).firstOrFail()
   }
 }
