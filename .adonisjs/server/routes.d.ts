@@ -4,6 +4,7 @@ type ParamValue = string | number | bigint | boolean
 
 export type ScannedRoutes = {
   ALL: {
+    'landing': { paramsTuple?: []; params?: {} }
     'home': { paramsTuple?: []; params?: {} }
     'projects.index': { paramsTuple?: []; params?: {} }
     'projects.create': { paramsTuple?: []; params?: {} }
@@ -11,6 +12,9 @@ export type ScannedRoutes = {
     'projects.llm_settings': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'projects.llm_settings.save': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'projects.documentation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'auth.me': { paramsTuple?: []; params?: {} }
+    'auth.login': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
@@ -18,26 +22,32 @@ export type ScannedRoutes = {
     'session.destroy': { paramsTuple?: []; params?: {} }
   }
   GET: {
+    'landing': { paramsTuple?: []; params?: {} }
     'home': { paramsTuple?: []; params?: {} }
     'projects.index': { paramsTuple?: []; params?: {} }
     'projects.create': { paramsTuple?: []; params?: {} }
     'projects.llm_settings': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'projects.documentation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'auth.me': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
   }
   HEAD: {
+    'landing': { paramsTuple?: []; params?: {} }
     'home': { paramsTuple?: []; params?: {} }
     'projects.index': { paramsTuple?: []; params?: {} }
     'projects.create': { paramsTuple?: []; params?: {} }
     'projects.llm_settings': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'projects.documentation': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'auth.me': { paramsTuple?: []; params?: {} }
     'new_account.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
   }
   POST: {
     'projects.store': { paramsTuple?: []; params?: {} }
     'projects.llm_settings.save': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'auth.login': { paramsTuple?: []; params?: {} }
+    'auth.logout': { paramsTuple?: []; params?: {} }
     'new_account.store': { paramsTuple?: []; params?: {} }
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }

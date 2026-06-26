@@ -2,6 +2,7 @@
 import type { routes } from './index.ts'
 
 export interface ApiDefinition {
+  landing: typeof routes['landing']
   home: typeof routes['home']
   projects: {
     index: typeof routes['projects.index']
@@ -11,6 +12,11 @@ export interface ApiDefinition {
       save: typeof routes['projects.llm_settings.save']
     }
     documentation: typeof routes['projects.documentation']
+  }
+  auth: {
+    me: typeof routes['auth.me']
+    login: typeof routes['auth.login']
+    logout: typeof routes['auth.logout']
   }
   newAccount: {
     create: typeof routes['new_account.create']

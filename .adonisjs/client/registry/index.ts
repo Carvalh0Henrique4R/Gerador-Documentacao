@@ -6,10 +6,16 @@ import type { ApiDefinition } from './tree.d.ts'
 const placeholder: any = {}
 
 const routes = {
-  'home': {
+  'landing': {
     methods: ["GET","HEAD"],
     pattern: '/',
     tokens: [{"old":"/","type":0,"val":"/","end":""}],
+    types: placeholder as Registry['landing']['types'],
+  },
+  'home': {
+    methods: ["GET","HEAD"],
+    pattern: '/home',
+    tokens: [{"old":"/home","type":0,"val":"home","end":""}],
     types: placeholder as Registry['home']['types'],
   },
   'projects.index': {
@@ -47,6 +53,24 @@ const routes = {
     pattern: '/projects/:id/documentation',
     tokens: [{"old":"/projects/:id/documentation","type":0,"val":"projects","end":""},{"old":"/projects/:id/documentation","type":1,"val":"id","end":""},{"old":"/projects/:id/documentation","type":0,"val":"documentation","end":""}],
     types: placeholder as Registry['projects.documentation']['types'],
+  },
+  'auth.me': {
+    methods: ["GET","HEAD"],
+    pattern: '/auth/me',
+    tokens: [{"old":"/auth/me","type":0,"val":"auth","end":""},{"old":"/auth/me","type":0,"val":"me","end":""}],
+    types: placeholder as Registry['auth.me']['types'],
+  },
+  'auth.login': {
+    methods: ["POST"],
+    pattern: '/auth/login',
+    tokens: [{"old":"/auth/login","type":0,"val":"auth","end":""},{"old":"/auth/login","type":0,"val":"login","end":""}],
+    types: placeholder as Registry['auth.login']['types'],
+  },
+  'auth.logout': {
+    methods: ["POST"],
+    pattern: '/auth/logout',
+    tokens: [{"old":"/auth/logout","type":0,"val":"auth","end":""},{"old":"/auth/logout","type":0,"val":"logout","end":""}],
+    types: placeholder as Registry['auth.logout']['types'],
   },
   'new_account.create': {
     methods: ["GET","HEAD"],
